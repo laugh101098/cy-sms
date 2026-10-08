@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<!-- 판 고르기(문자링크 카드 041 · 정식 전 임시) — 서버가 없어 브라우저가 고른다: 판별기 = ua-parser-js 1.0.35(Next 안의 것과 같은 판) · 갈림 = 작업방 src/lib/sms/landing.ts 손님기기() 그대로 -->
+<html lang="ko" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CoinYeon</title>
+<style>html { background: #0c0d10; }</style>
+<noscript><meta http-equiv="refresh" content="0; url=p.html"></noscript>
+<script src="ua-parser.min.js"></script>
+<script>
+  var 판 = "p";
+  try {
+    var r = new UAParser(navigator.userAgent).getResult();
+    if (r.os.name !== "iOS" && r.os.name !== "Android") 판 = "c";
+    else if (r.os.name === "iOS" && r.browser.name === "Instagram") 판 = "i";
+  } catch (e) { /* 판별기를 못 받으면 폰 판 */ }
+  location.replace(판 + ".html");
+</script>
+</head>
+<body></body>
+</html>

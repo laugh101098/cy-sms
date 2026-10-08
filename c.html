@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<!-- 손님 링크 페이지 — 담곰 합격 시안(`coinyeon-문자링크/mock/sms-landing.html` · 카드 019 · 장부 44줄)을 실물로 (문자링크 카드 035 · `설계_링크페이지.md` 걸음 3)
+     ★모양 = 합격 시안 그대로(잠금 A-4 · B-10 · B-13 · C-11 · C-12 · C-16 · 글자 24 · 30 · 26 · 끌어 정한 자리) — 값을 바꾸지 않는다(장부 법 §21)
+     바꾼 것 = ①시안 손잡이를 뺐다(보기 바꾸기 · 자동 끄기 · 주소 테마 · 글자 크기 조절 · 덩어리 끌기 · 미리보기 안내 — 값은 잠금 값 그대로)
+              ②글은 서버가 넣는다(이 틀의 퍼센트 두 겹 자리 · 이스케이프 — landingPage.ts) · 판마다 그 판 칸만 싣는다(폰 = QR · 워드마크 글꼴 0 · 장부 D-2)
+              ③제목 = h1(폰 「누르면 신청됩니다.」 · 컴퓨터 할 일 글) · 대문자 doctype(웹 표준 빚 0 — 지도 [2-1] ③)
+              ④글꼴 = 집안 공식 프리텐다드 줄(/mock/pretendard-official.css — 집안 팝업 · 정산 · 등업 화면과 같은 한 줄 · display swap · 운영에 있다)
+                · 워드마크 = /fonts/Geist-Variable.woff2(시안과 같은 바이트 — sha256 affce752…)
+              ⑤테마 = 다크 기본 + 사이트에서 라이트를 고른 손님은 라이트(사이트 themeInit 과 같은 열쇠 coinyeon-theme · 주소 손잡이 0)
+     ⛔손님 글자를 정하지 않는다 — 「누르면 신청됩니다.」 · 「보내기」 · QR 안내 = 담곰 원문(§17 · §28 · 장부 A-2 · A-4) · 문자 · 할 일 글 = 그 링크의 담곰 글 -->
+<html lang="ko" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CoinYeon</title>
+<script>
+  /* 다크 기본(헌장 §3) · 사이트에서 라이트를 고른 손님은 라이트(사이트 themeInit 과 같은 열쇠 — 주소 손잡이 0) */
+  try { if (localStorage.getItem("coinyeon-theme") === "light") document.documentElement.dataset.theme = "light"; } catch (e) { /* 저장소가 막히면 다크 그대로 */ }
+</script>
+<link rel="stylesheet" href="mock/pretendard-official.css">
+<style>
+/* ════════════════════════════════════════════════════════════════════════════
+   손님 링크 페이지 — 광고를 누른 손님이 보는 화면(담곰 합격 · 장부 44줄 · 판정 = 문자링크 방 scripts/요구장부검사.mjs)
+   폰 = 코인연 마크 + 「누르면 신청됩니다.」 + 큰 알약 [보내기](2번 · §20) — 보고 판단할 것을 두지 않는다(D-17)
+   PC = QR(B 모서리 틀 · 가운데 아이콘) + 할 일 글(담곰이 링크마다) + 보낼 문자·받는 번호 줄마다 복사
+   ★담곰 합격판 잠금(장부 B-10 · C-11 · C-12 — 이 값을 바꾸면 ⛔):
+     폰 단추 = 3판 「파랑 + 빛 지나감」(§23) — 애플 파랑 단추(apple.com .button 실측 #0071E3 · 흰 글씨 4.7:1) + 텔레그램 t.me 단추 빛 띠(telegram.css:3676 · 5초)
+     컴퓨터  = 1판 「인기고래 무지개」(§23) — QR 테두리 = 원래 무지개 색상각(담곰 합격·잠1)에서 청록 구역을 빼고 밝기 고정(oklch L .72 · C .12) · 3.4초 회전
+     아이콘  = QR 가운데(§24 「큐알가운데. 이렇게 하자.」) — 텔레그램 웹·왓츠앱 웹 컴퓨터 로그인 QR 문법 · QR 오류 정정 H
+   ⛔「보내기」 글자 움직임 금지(§24) — 담곰 뜻 = 글자 생김새(크기부터 · 장부 B-12)
+   ★글자 크기 = 담곰이 조절판에서 고른 숫자(§25 — 「보내기」 24 · 할 일 글 30 · QR 안내 26) · 주변 글자는 할 일 글을 따라 정수로(전집 타이포-12 · 타이포-11)
+   ★글자에 딸린 값(아이콘 크기 · 아이콘↔글 틈 · QR↔안내 틈 · 할 일 글↔줄 틈 · 이름표 칸 · 줄 칸 틈 · 복사 아이콘·틈)은 글자를 따라간다(§25 · 장부 D-8)
+     — 비율 = 담곰 합격판 · 간격은 4px 격자(전집 격자-01) · 아래 :root 의 값 = 시안이 담곰 숫자로 셈한 그 결과(잠금)
+     — 아이콘은 글자 크기로 · 글자 기준선에 붙인다(세상 문법 = Font Awesome `vertical-align: -.125em` · Bootstrap Icons 같음) · 단추 높이 64 는 따라가지 않는다(세상 단추 비율 0.33~0.39)
+   ⛔청록 = 이 작업의 단추·아이콘·QR 테두리에서 금지(§19·§21 · 금지 구역 = oklch 색상각 140~225°)
+   그리기 표준(인기고래 판례 · 정본 coinyeon-whalechart/인기고래_TOP10_20260810/로드맵_그리기병목_20260816.md):
+     그림은 한 번만 굽고 transform 으로만 움직인다(합성기 전용 · [C] web.dev) · 회전판은 정사각형이고 한 변 ≥ 상자 대각선(표5) · ⛔링에 overflow:hidden 금지 · 움직임 줄이기 존중
+   색 = 운영 실물 토큰 그대로 — 출처 `디자인_지금(운영실물).md` · 글꼴 = 운영과 같은 파일(/fonts/…)
+   워드마크 = 집안 상단바 그대로(TopBarFrame.tsx:257-261 — /cy-mark.png 26px + 「CoinYeon」 Geist 16/500 · 자간 -0.01em) · PC 에만
+   ════════════════════════════════════════════════════════════════════════════ */
+@font-face { font-family: "Geist"; src: url(fonts/Geist-Variable.woff2) format("woff2-variations"); font-weight: 100 900; font-display: block; }
+
+:root {
+  --bg:#0c0d10; --surface-1:#181a20; --row-hover:#181a20;
+  --text:#f8f9fb; --text-2:#eceef1; --text-muted:#dee1e6; --text-faint:#d2d6dc;
+  --hair:#ffffff0f; --hair-strong:#ffffff1c; --up:#1fb6a0; --accent:#1fb6a0;
+  --cta-bg:#f0f1f3; --cta-text:#0c0d10;
+  --r-ctl:9px; --r-card:14px;
+  --font-sans:"Pretendard Variable", system-ui, -apple-system, sans-serif;
+  --act:#0071E3;      /* 애플 파랑 — apple.com .button 실측 rgb(0,113,227) · 다크·라이트 같은 값(애플도 같다) */
+  --on-act:#ffffff;   /* 파랑 위 글씨 — apple.com 실측 흰색 · 대비 4.70:1 · 집안 선례 = 운영 라이트 --on-accent #fff */
+  /* 글자 크기 = 담곰 §25(조절판 손잡이로 고른 숫자 · 잠금)
+     「보내기」 24 = 단추 64px × 0.375(세상 단추 0.33~0.39 안 — 애플 「더 알아보기」·텔레그램 「View in Telegram」) · 할 일 글 30 · QR 안내 26
+     값 23 · 이름표 18 = 할 일 글 30 을 따라(17/22 · 13/22 — 옛 위계 사다리 그대로)
+     글자에 딸린 값 = 담곰 합격판 비율 × 그 글자 → 4px 격자: 아이콘 29 · 틈 12 · 정렬 −5 / QR↔안내 40 / 할 일↔줄 32 / 줄 칸 틈 20 · 이름표 칸 112 / 복사 아이콘 19 · 틈 8 */
+  --sz-cta: 24px; --sz-todo: 30px; --sz-val: 23px; --sz-lab: 18px; --sz-qr: 26px;
+  --cta-ic: 29px; --cta-gap: 12px; --cta-va: -5px; --qr-gap: 40px; --todo-gap: 32px; --row-gap: 20px; --lab-col: 112px; --cp-ic: 19px; --cp-gap: 8px;
+  --plane: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2IiBmaWxsPSJjdXJyZW50Q29sb3IiPjxwYXRoIGQ9Ik0yMzEuNCw0NC4zNHMwLC4xLDAsLjE1bC01OC4yLDE5MS45NGExNS44OCwxNS44OCwwLDAsMS0xNCwxMS41MXEtLjY5LjA2LTEuMzguMDZhMTUuODYsMTUuODYsMCwwLDEtMTQuNDItOS4xNUwxMDcsMTY0LjE1YTQsNCwwLDAsMSwuNzctNC41OGw1Ny45Mi01Ny45MmE4LDgsMCwwLDAtMTEuMzEtMTEuMzFMOTYuNDMsMTQ4LjI2YTQsNCwwLDAsMS00LjU4Ljc3TDE3LjA4LDExMi42NGExNiwxNiwwLDAsMSwyLjQ5LTI5LjhsMTkxLjk0LTU4LjIuMTUsMEExNiwxNiwwLDAsMSwyMzEuNCw0NC4zNFoiLz48L3N2Zz4=");
+  /* ↑ 담곰이 고른 33번 = Phosphor Fill paper-plane-tilt 원본 380바이트 그대로(문자링크 방 mock/icons/ph_paper-plane-tilt.svg · sha256 ed177b45… = 목록.json) · 요청 0 */
+}
+:root[data-theme="light"] {
+  --bg:#f4f2ee; --surface-1:#fff; --row-hover:#f0eee8;
+  --text:#090a0d; --text-2:#181a1f; --text-muted:#26282e; --text-faint:#2c2a25;
+  --hair:#28262116; --hair-strong:#28262129; --up:#0e9c88; --accent:#0e9c88;
+  --cta-bg:#1b1c1f; --cta-text:#fbfaf7;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); color-scheme: dark; -webkit-text-size-adjust: 100%; }
+html[data-theme="light"] { color-scheme: light; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: var(--font-sans); font-size: 14px; line-height: 1.5;
+  font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  word-break: keep-all; overflow-wrap: break-word;
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+svg.i { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+[hidden] { display: none !important; }
+
+/* ⛔페이지 상자를 자르지 않는다(overflow: clip) — 진짜 넘침 버그까지 숨긴다(손님시안검문 ① 실측) · 넘침은 자르지 말고 잰다(요구장부검사 D-4) */
+main { max-width: 440px; min-height: 100svh; margin: 0 auto; padding: 0 16px; display: flex; flex-direction: column; }
+main[data-view="pc"] { max-width: 880px; padding: 0 24px 48px; }
+.top { height: 64px; display: flex; align-items: center; }
+.wordmark { display: inline-flex; align-items: center; gap: 8px; font-family: "Geist", sans-serif; font-size: 16px; font-weight: 500; letter-spacing: -0.01em; line-height: 1; color: var(--text); }
+.wordmark img { display: block; width: 26px; height: 26px; }
+.glyph { flex-shrink: 0; display: block; -webkit-mask: var(--plane) center / contain no-repeat; mask: var(--plane) center / contain no-repeat; }
+
+/* ── 폰 — 마크 + 한 줄 + 큰 알약. 둘을 화면 가운데보다 살짝 위(아래 여백을 더 크게)에 둔다 ── */
+.ask { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 48px 0 96px; }
+.hero { display: flex; justify-content: center; margin-bottom: 24px; }
+.mark { display: block; width: 64px; height: 64px; }   /* C 코인연 마크(§19 「가장 좋아」) · 상단바와 같은 파일 · 로고 자체 색은 그대로(장부 D-1) */
+.ask-line { margin: 0; text-align: center; font-size: 28px; font-weight: 600; line-height: 36px; letter-spacing: -0.025em; color: var(--text); }   /* 이 화면의 제목 = 600(전집 타이포-08) */
+.cta-wrap { position: relative; margin-top: 32px; isolation: isolate; }
+/* 단추 = 2번 알약(§20) · ★3판 잠금(§23 · 장부 B-10): 애플 파랑 면 + 흰 글씨 + 텔레그램 빛 띠.
+   단추가 제 안을 자른다(overflow) — 지나가는 빛이 단추 밖으로 못 나가 화면 넓이를 흔들지 않는다(인기고래 「통통」 판례 · [A] W3C CSS Overflow 3) */
+.cta {
+  position: relative; z-index: 1; overflow: hidden; display: flex; align-items: center; justify-content: center;
+  min-height: 64px; padding: 0 24px; border-radius: 999px; background: var(--act);
+  color: var(--on-act); font-size: var(--sz-cta); font-weight: 500; text-decoration: none; -webkit-tap-highlight-color: transparent; transition: opacity .15s;
+}
+.cta:hover, .cta:active { opacity: .92; }
+/* 아이콘 + 「보내기」 = 한 줄 한 묶음(단추가 가운데에 둔다 · 장부 B-13) — 아이콘은 글자 기준선에 붙는다(Font Awesome·Bootstrap Icons 문법)
+   정렬값 = 글자 잉크 가운데(기준선 위 0.355em — 프리텐다드 500 「보내기」 실측) − 아이콘 잉크 가운데(제 상자 아래에서 0.469 — 33번 원본 실측) → ★정수 px
+   (정수가 아니면 기준선이 .5 에 걸릴 때 글자와 아이콘 상자가 따로 반올림돼 1px 어긋났다 · 정수면 같이 반올림된다 — 크로미움·웹킷 18~24 실측 ±0.33px) */
+.cta-in { position: relative; z-index: 1; white-space: nowrap; }
+.cta .glyph { display: inline-block; width: var(--cta-ic); height: var(--cta-ic); margin-inline-end: var(--cta-gap); vertical-align: var(--cta-va); background: var(--on-act); }
+/* 「보내기」(.cta-label) = 담곰 글자 그대로 · 글꼴 그대로 · 굵기 500(전집 타이포-08 — 600 은 행 식별자·섹션 제목에만) · 크기 = 단추에서 물려받음(장부 B-12) · ⛔움직임 없음(§24)
+   ★가운데 = 아이콘+글자 한 묶음을 단추 가운데(담곰 합격 · 장부 B-13 잠금 · §27 「그냥 아이콘+글자를 한 묶음으로 해서 버튼 안에 가운데정렬」) */
+.shine { position: absolute; inset: 0; z-index: 0; border-radius: inherit; overflow: hidden; pointer-events: none; }   /* 텔레그램 빛 띠(면 안 — 자를 테두리가 없다) */
+.shine::before {
+  content: ""; position: absolute; inset: 0; transform: translateX(-100%); animation: shine 5s linear infinite; will-change: transform;
+  background: linear-gradient(270deg, rgba(100, 181, 239, 0) 48.44%, #64b5ef 75.52%, rgba(100, 181, 239, 0) 100%);   /* telegram.css:3676 그대로 */
+}
+@keyframes shine { 0% { transform: translateX(-100%); } 23% { transform: translateX(100%); } 100% { transform: translateX(100%); } }   /* 텔레그램 리듬 = 5초 중 약 1.2초 지나가고 쉰다 */
+
+/* ── 컴퓨터 — 왼쪽 QR(주력) · 오른쪽 = QR 을 못 찍는 손님의 길 ── */
+.body { margin-top: 48px; display: grid; grid-template-columns: 272px minmax(0, 1fr); column-gap: 64px; align-items: start; }
+.qr-frame { position: relative; isolation: isolate; }
+.qr img { position: relative; z-index: 1; display: block; width: 272px; height: 272px; padding: 16px; border: 1px solid var(--hair-strong); border-radius: var(--r-card); background: #fff; }   /* QR 은 밝은 바탕이어야 찍힌다 */
+/* QR 테두리 = B 모서리 틀(담곰 「B로 가자」) 에 도는 빛(§21 「인기고래 테두리만들 때처럼」) · ★1판 잠금(§23 · 장부 C-11)
+   리본(border-box − padding-box) ∩ 네 모서리(가로 띠 ∩ 세로 띠) — 한 장의 회전판이 네 모서리를 함께 돈다 */
+.qring { position: absolute; z-index: 0; inset: -16px; border: 3px solid transparent; border-radius: 30px; pointer-events: none;   /* 30 = QR 모서리 14 + 틈 16 → 같은 중심으로 휜다 */
+  -webkit-mask:
+    linear-gradient(to bottom, #000 56px, transparent 56px calc(100% - 56px), #000 calc(100% - 56px)) border-box,
+    linear-gradient(to right,  #000 56px, transparent 56px calc(100% - 56px), #000 calc(100% - 56px)) border-box,
+    linear-gradient(#000, #000) padding-box, linear-gradient(#000, #000) border-box;
+  -webkit-mask-composite: source-in, source-in, xor;
+  mask:
+    linear-gradient(to bottom, #000 56px, transparent 56px calc(100% - 56px), #000 calc(100% - 56px)) border-box,
+    linear-gradient(to right,  #000 56px, transparent 56px calc(100% - 56px), #000 calc(100% - 56px)) border-box,
+    linear-gradient(#000, #000) padding-box, linear-gradient(#000, #000) border-box;
+  mask-composite: intersect, intersect, exclude; }
+/* 도는 빛 — 그림(conic)은 한 번 굽고 transform 으로만 돈다(인기고래 판례 · 합성기 전용) · 틀(304×304)의 대각선 430 ≤ 150% = 456 (표5)
+   색 = 1판 인기고래 무지개: 색상각 233.6 · 287.7 · 339.8 · 23.8 · 73.8 · 104.5(원래 무지개 실측) · L .72 · C .12 · 거울(이음매 없이 · 청록을 지나지 않게)
+   두 줄 = 「hex 안전판 → oklch」(인기고래 2단 문법 — oklch 를 모르는 기기는 첫 줄) */
+.qring::before {
+  content: ""; position: absolute; top: 50%; left: 50%; width: 150%; aspect-ratio: 1; translate: -50% -50%;
+  animation: ring-spin 3.4s linear infinite; will-change: transform;
+  background: conic-gradient(#49b1e4, #a198ec, #d686bc, #e68580, #d19846, #b1a846, #d19846, #e68580, #d686bc, #a198ec, #49b1e4);
+  background: conic-gradient(in oklch, oklch(.72 .12 233.6), oklch(.72 .12 287.7), oklch(.72 .12 339.8), oklch(.72 .12 23.8), oklch(.72 .12 73.8), oklch(.72 .12 104.5), oklch(.72 .12 73.8), oklch(.72 .12 23.8), oklch(.72 .12 339.8), oklch(.72 .12 287.7), oklch(.72 .12 233.6));
+}
+@keyframes ring-spin { to { transform: rotate(360deg); } }
+/* 아이콘 = QR 가운데(§24 확정 · 텔레그램 웹·왓츠앱 웹 실물) — QR 의 흰 바탕을 둥글게 비우고(QR 자신의 흰색 = 상자가 아니다 · 타일 금지 DESIGN 07-21)
+   그 위에 33번 아이콘(1판 무지개 · §23 잠금 C-11). 가린 칸은 QR 오류 정정 H(30%)가 되살린다 — 가린 넓이 ≈ QR 의 4.3%(지름 56 / 그림 240) · 실제로 읽히는지 = 요구장부검사 C-12(jsQR) */
+.qr-mark { position: absolute; z-index: 2; top: 50%; left: 50%; width: 56px; height: 56px; translate: -50% -50%; border-radius: 50%; background: #fff; display: grid; place-items: center; pointer-events: none; }
+#pc-icon { width: 28px; height: 28px; background: linear-gradient(135deg, #49b1e4, #a198ec, #d686bc, #e68580, #d19846, #b1a846); }
+/* QR 안내 — 글 = 담곰 새 멘트(§28 · 장부 A-4) · 크기 = 담곰 숫자(C-13) · 글 폭 = QR 그림 폭(240) → 두 줄로 고르게(balance · keep-all 이라 띄어쓰기에서만 끊긴다)
+   QR 과의 틈 = 도는 틀 밖 16(틀 규격) + 글자를 따르는 틈(합격판 18 일 때 16 · 장부 C-14 · 담곰 §25 「약간 여백」) */
+.qr-call { margin: var(--qr-gap) 0 0; text-align: center; font-size: var(--sz-qr); font-weight: 500; line-height: calc(var(--sz-qr) + 8px); letter-spacing: -0.01em; color: var(--text); }
+.qr-call span { display: inline-block; max-width: 240px; text-wrap: balance; }
+
+/* 할 일 — 할 일 글 → 보낼 것 두 줄. ★왼끝은 한 선(전집 밀·정렬-01 「제목·리드·표 왼끝 = 0 기준선 하나」) · 크기 = 담곰 숫자(C-13) · 주변 글자 = 할 일 글을 따라(타이포-12) */
+.todo { container-type: inline-size; }
+.pc-line { margin: 0; font-size: var(--sz-todo); font-weight: 600; line-height: calc(var(--sz-todo) + 8px); letter-spacing: -0.02em; color: var(--text); }
+/* 할 일 글↔줄 틈 · 이름표 칸 · 줄 칸 틈 = 글자를 따른다(장부 D-8 · 합격판 = 할 일 22 일 때 24 · 이름표 13 일 때 칸 80 · 값 17 일 때 16) · 줄 높이 64 는 집안 골격(따라가지 않는다) */
+.rows { margin-top: var(--todo-gap); border-top: 1px solid var(--hair-strong); }
+.row { display: grid; grid-template-columns: var(--lab-col) minmax(0, 1fr) auto; align-items: center; column-gap: var(--row-gap); min-height: 64px; padding: 8px 0; border-bottom: 1px solid var(--hair-strong); }
+.label { font-size: var(--sz-lab); font-weight: 500; color: var(--text-faint); white-space: nowrap; }
+.val { font-size: var(--sz-val); font-weight: 500; line-height: calc(var(--sz-val) + 9px); color: var(--text); text-wrap: pretty; }
+.val .w { white-space: nowrap; }   /* 띄어쓰기에서만 끊는다 — 크로미움은 keep-all 이어도 「#」과 한글 사이를 끊는다(실측 · 「#」/「광철」 §20) */
+/* 칸이 좁으면(창이 좁은 컴퓨터) 이름표를 값 위로 — 값이 줄 폭을 다 쓴다(행 재구성 · 전집 모바일-01 · [A] W3C 컨테이너 쿼리) */
+@container (max-width: 420px) { .row { grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; } .row .label { grid-column: 1 / -1; } }
+.tbtn { display: inline-flex; align-items: center; gap: var(--cp-gap); min-height: 44px; padding: 0 0 0 8px; background: none; border: 0; color: var(--text-muted); font-size: var(--sz-lab); font-weight: 500; white-space: nowrap; }
+.tbtn:hover { color: var(--text); }
+.tbtn .i { width: var(--cp-ic); height: var(--cp-ic); }   /* 복사 아이콘·틈 = 「복사」 글자를 따른다(합격판 = 13 일 때 14 · 틈 6 → 4px 격자) */
+
+main[data-view="pc"] .phone-only, main:not([data-view="pc"]) .pc-only { display: none; }
+
+/* 덩어리 위치 — ★담곰 합격 자리(§27 「컴퓨터 화면은 이렇게」 · 장부 C-16 잠금 · 시안판에서 담곰이 끌어 정한 값 · 4px 칸 · 그림 문자링크 방 mock/ref/담곰_027_컴퓨터_합격위치.png) */
+[data-move="call"] { --bx: 0px; --by: 4px; }
+[data-move="todo"] { --bx: 12px; --by: 8px; }
+[data-move="msg"] { --bx: 12px; --by: 20px; }
+[data-move="num"] { --bx: 12px; --by: 36px; }
+[data-move] { translate: var(--bx, 0px) var(--by, 0px); }
+
+@media (prefers-reduced-motion: reduce) { .qring::before, .shine::before { animation: none; } * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main data-view="pc">
+
+
+  <header class="top pc-only"><span class="wordmark" data-part="brand"><img src="cy-mark.png" alt="" width="26" height="26">CoinYeon</span></header>
+
+  <!-- 컴퓨터 -->
+  <div class="body pc-only">
+    <div class="qr" data-part="qr">
+      <div class="qr-frame" data-move="qr"><img id="qr" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNDAiIGhlaWdodD0iMjQwIiB2aWV3Qm94PSIwIDAgNDEgNDEiIHNoYXBlLXJlbmRlcmluZz0iY3Jpc3BFZGdlcyI+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTAgMGg0MXY0MUgweiIvPjxwYXRoIHN0cm9rZT0iIzAwMDAwMCIgZD0iTTIgMi41aDdtMiAwaDJtMyAwaDFtNCAwaDFtMiAwaDJtMSAwaDFtMSAwaDJtMSAwaDdNMiAzLjVoMW01IDBoMW0yIDBoMW0yIDBoM20xIDBoMm0xIDBoMm0yIDBoMm01IDBoMW01IDBoMU0yIDQuNWgxbTEgMGgzbTEgMGgxbTIgMGgxbTEgMGgxbTEgMGgybTIgMGgxbTEgMGgxbTEgMGgzbTQgMGgxbTEgMGgxbTEgMGgzbTEgMGgxTTIgNS41aDFtMSAwaDNtMSAwaDFtNSAwaDRtMSAwaDFtMSAwaDJtMyAwaDJtMSAwaDFtMiAwaDFtMSAwaDNtMSAwaDFNMiA2LjVoMW0xIDBoM20xIDBoMW0xIDBoMW0yIDBoMW00IDBoMW0xIDBoMW0xIDBoMW0yIDBoMm0yIDBoMW0yIDBoMW0xIDBoM20xIDBoMU0yIDcuNWgxbTUgMGgxbTIgMGg2bTUgMGgybTIgMGgybTQgMGgxbTUgMGgxTTIgOC41aDdtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDdNMTAgOS41aDJtMSAwaDJtMSAwaDFtMSAwaDFtNCAwaDJtNCAwaDJNNCAxMC41aDJtMiAwaDZtMSAwaDFtMyAwaDFtMSAwaDFtMSAwaDFtMiAwaDJtMSAwaDRtMSAwaDFNMiAxMS41aDJtMSAwaDNtMiAwaDJtMSAwaDFtNCAwaDFtMSAwaDFtMSAwaDFtNCAwaDRtMSAwaDFtMyAwaDNNMyAxMi41aDNtMSAwaDJtMyAwaDFtMiAwaDJtNCAwaDNtMSAwaDNtMSAwaDFtMSAwaDFtMiAwaDJtMiAwaDFNMiAxMy41aDFtMSAwaDNtMiAwaDFtMSAwaDFtMSAwaDFtMyAwaDJtMiAwaDFtMSAwaDFtMSAwaDVtNCAwaDFtMiAwaDFNMiAxNC41aDFtMiAwaDJtMSAwaDNtMSAwaDNtMSAwaDFtMiAwaDVtMSAwaDRtMSAwaDNtMyAwaDNNMiAxNS41aDNtMiAwaDFtMSAwaDFtMiAwaDFtMSAwaDFtMyAwaDFtMSAwaDJtMyAwaDFtMSAwaDNtMiAwaDFtMyAwaDNNMiAxNi41aDFtMSAwaDJtMSAwaDNtMSAwaDRtMiAwaDFtMSAwaDRtMiAwaDFtMSAwaDFtMSAwaDFtMiAwaDFtMyAwaDJNMiAxNy41aDNtMSAwaDFtMyAwaDJtMSAwaDJtMSAwaDJtNSAwaDJtMiAwaDFtMSAwaDJtMSAwaDJtMyAwaDJNMyAxOC41aDFtMSAwaDFtMSAwaDRtMiAwaDNtMyAwaDJtMSAwaDFtMSAwaDFtMiAwaDJtMSAwaDFtMiAwaDRNMiAxOS41aDJtNiAwaDFtMiAwaDFtMyAwaDFtMiAwaDNtNSAwaDFtMSAwaDFtMSAwaDJtMSAwaDJtMSAwaDFNMyAyMC41aDFtMSAwaDJtMSAwaDFtMSAwaDRtMiAwaDFtMSAwaDNtMSAwaDFtMiAwaDFtMiAwaDFtNyAwaDNNNCAyMS41aDNtMiAwaDRtMSAwaDFtMSAwaDRtMiAwaDFtMyAwaDJtMyAwaDFtMiAwaDJNNCAyMi41aDJtMiAwaDJtMSAwaDFtMiAwaDFtMSAwaDFtMiAwaDFtMiAwaDFtMSAwaDFtMSAwaDJtMSAwaDJtMSAwaDFtMSAwaDFtMiAwaDJNNSAyMy41aDJtMiAwaDNtMiAwaDRtMSAwaDFtMiAwaDFtMiAwaDFtMSAwaDFtMyAwaDFtMSAwaDFtMSAwaDFtMiAwaDFNOCAyNC41aDFtMiAwaDNtMyAwaDZtNCAwaDFtNCAwaDFtMSAwaDJtMiAwaDFNMyAyNS41aDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMiAwaDFtNSAwaDFtMSAwaDNtMSAwaDFtMiAwaDJtMSAwaDFtNCAwaDFNNCAyNi41aDFtMyAwaDJtMiAwaDNtMSAwaDFtMSAwaDFtMSAwaDNtMiAwaDJtMSAwaDFtMSAwaDJtMSAwaDZNMyAyNy41aDJtMSAwaDFtMiAwaDRtMyAwaDFtMiAwaDFtMiAwaDJtMSAwaDRtMiAwaDFtMyAwaDFtMSAwaDJNMyAyOC41aDJtMSAwaDFtMSAwaDJtMSAwaDFtMiAwaDFtMiAwaDVtMyAwaDFtMSAwaDJtNCAwaDFtMSAwaDJtMSAwaDFNMiAyOS41aDFtMSAwaDJtMSAwaDFtMSAwaDJtMiAwaDJtMiAwaDFtMSAwaDNtMSAwaDFtMSAwaDFtMyAwaDFtMSAwaDFtMSAwaDJtMSAwaDNNNSAzMC41aDRtMSAwaDFtMiAwaDFtMSAwaDRtMSAwaDFtMyAwaDFtMSAwaDJtMiAwaDVtMyAwaDFNMTAgMzEuNWgybTEgMGgxbTQgMGgybTEgMGgybTIgMGgxbTQgMGgxbTMgMGg1TTIgMzIuNWg3bTEgMGgxbTEgMGgxbTEgMGgzbTIgMGgxbTIgMGgxbTIgMGgybTMgMGgxbTEgMGgxbTEgMGgybTEgMGgyTTIgMzMuNWgxbTUgMGgxbTIgMGgxbTEgMGg0bTEgMGgxbTEgMGgxbTEgMGgybTEgMGgzbTIgMGgxbTMgMGgyTTIgMzQuNWgxbTEgMGgzbTEgMGgxbTMgMGg0bTEgMGgzbTIgMGgybTIgMGgybTEgMGg3TTIgMzUuNWgxbTEgMGgzbTEgMGgxbTEgMGg1bTIgMGgzbTEgMGgxbTIgMGgxbTEgMGgzbTMgMGgybTEgMGgybTEgMGgxTTIgMzYuNWgxbTEgMGgzbTEgMGgxbTEgMGg5bTEgMGg0bTEgMGgybTMgMGgxbTEgMGgybTMgMGgxTTIgMzcuNWgxbTUgMGgxbTMgMGgybTQgMGg1bTUgMGg0bTQgMGgxTTIgMzguNWg3bTIgMGgzbTIgMGgybTEgMGgxbTIgMGgxbTMgMGg0bTEgMGgybTQgMGgyIi8+PC9zdmc+Cg==" alt="QR" width="272" height="272"><i class="qring" data-part="qr-ring" aria-hidden="true"></i><span class="qr-mark" data-part="qr-mark" aria-hidden="true"><span class="glyph" id="pc-icon" data-part="pc-icon"></span></span></div>
+      <p class="qr-call" data-part="qr-call" data-move="call"><span id="qr-call-text">폰 카메라로 찍으면 3초 만에 신청돼요</span></p>
+    </div>
+
+    <section class="todo" aria-label="문자로 직접 보내기">
+      <h1 class="pc-line" id="pc-line" data-part="pc-line" data-move="todo"><span id="pc-line-text">문자를 보내면 신청이 완료됩니다.</span></h1>
+      <div class="rows">
+        <div class="row" data-part="message" data-move="msg"><span class="label">보낼 문자</span><span class="val" id="msg"><span class="w">코인연</span> <span class="w">지표(웨일포스)</span> <span class="w">신청합니다.</span></span><button type="button" class="tbtn" data-copy="msg" aria-label="보낼 문자 복사"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>복사</button></div>
+        <div class="row" data-part="number" data-move="num"><span class="label">받는 번호</span><span class="val" id="num">010-6558-3633</span><button type="button" class="tbtn" data-copy="num" aria-label="받는 번호 복사"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>복사</button></div>
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════════════
+   동작 — 실측으로 정해진 그대로(D-15 · 2026-10-05 담곰 폰)
+     폰(카톡·안드로이드 인스타·바깥 브라우저) = 열자마자 한 번 자동 + 같은 단추 · 아이폰 인스타 = 단추만(자동은 오류 화면)
+     PC = 자동 안 함(D-4) · 누르는 sms 단추도 없음(D-17) · 문자 주소 형식 = B(`?&body=` — 시험한 모든 곳에서 ✅)
+   ⛔손님 글자를 고치지 않는다 — 글은 서버가 그 링크의 담곰 글 그대로 넣었다(D-6 · D-10 · D-17).
+   기기 = 서버가 판별해 main 에 적었다(Next 내장 userAgent · 문자링크 방 손님기기()와 같은 갈림 · R-22)
+   ════════════════════════════════════════════════════════════════════════════ */
+const 기계기록 = [];   /* 기계 시험(navigator.webdriver) 때 열려던 주소 — 바깥 앱 대신 여기에 적는다 */
+const 아이콘 = { check: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>' };
+const 기기 = document.querySelector("main").dataset.view;
+
+/* 바깥 앱 열기 — ⛔기계 시험 중엔 실제로 열지 않는다(담곰 PC 는 sms 를 크롬이 열게 설정 — 완전체 크롬 = 계정 잠금 위험) */
+function 바깥열기(주소) {
+  if (navigator.webdriver) { 기계기록.push(주소); return; }
+  location.href = 주소;
+}
+function 자동열쇠() { return "자동:" + location.pathname + location.search; }
+function 이미자동() { try { return sessionStorage.getItem(자동열쇠()) === "1"; } catch { return false; } }
+/* 자동은 폰에서만(아이폰 인스타는 안 한다 — D-15 · 컴퓨터는 안 한다 — D-4) · 한 번만(뒤로 돌아온 손님에게 다시 열지 않는다) */
+function 자동시도() {
+  if (기기 !== "phone" || 이미자동()) return;
+  try { sessionStorage.setItem(자동열쇠(), "1"); } catch { /* 사생활 모드 — 새로고침 때 한 번 더 열려도 해롭지 않다 */ }
+  바깥열기(document.getElementById("send").getAttribute("href"));
+}
+
+/* 복사 — 보낼 문자 · 받는 번호(화면의 글 그대로) */
+async function 복사(종류, 단추) {
+  const 글 = document.getElementById(종류 === "num" ? "num" : "msg").textContent;
+  let 됨 = false;
+  try { await navigator.clipboard.writeText(글); 됨 = true; } catch {
+    /* http 주소(LAN)·앱 속 브라우저에선 clipboard API 가 막힐 수 있다 → 표준 대체(execCommand) */
+    const t = document.createElement("textarea"); t.value = 글; t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0";
+    document.body.appendChild(t); t.select(); try { 됨 = document.execCommand("copy"); } catch { /* 못 하면 표시를 안 붙인다 */ } t.remove();
+  }
+  if (!됨) return;
+  const 전 = 단추.innerHTML;
+  단추.dataset.done = "1"; 단추.innerHTML = `${아이콘.check}복사됨`;
+  setTimeout(() => { 단추.dataset.done = ""; 단추.innerHTML = 전; }, 1500);
+}
+
+document.addEventListener("click", (e) => {
+  const c = e.target.closest("[data-copy]");
+  if (c) { 복사(c.dataset.copy, c); return; }
+  const a = e.target.closest('a[href^="sms:"]');
+  if (a && navigator.webdriver) { e.preventDefault(); 기계기록.push(a.getAttribute("href")); } /* 바깥열기() 와 같은 이유 */
+});
+
+자동시도();
+</script>
+</body>
+</html>
